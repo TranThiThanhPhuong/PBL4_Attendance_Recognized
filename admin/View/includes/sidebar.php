@@ -16,28 +16,28 @@
         <div class="menu">
             <ul class="menu-links">
                 <li class="nav-links">
-                    <a href="trangchu.php">
+                    <a href="homeView.php">
                         <i class="icon la la-home"></i>
                         <span class="text nav-text">Trang chủ</span>
                     </a>
                 </li>
                 <li class="nav-links">
-                    <a href="diemdanh.php">
+                    <a href="attendanceView.php">
                         <i class="icon las la-calendar-check"></i>
                         <span class="text nav-text">Điểm danh</span>
                     </a>
                 </li>
                 <li class="nav-links">
-                    <a href="lop.php">
-                        <i class="icon las la-chalkboard"></i>
-                        <span class="text nav-text">Lớp</span>
+                    <a href="schedulerView.php">
+                        <i class="icon las la-calendar"></i>
+                        <span class="text nav-text">Lịch học</span>
                     </a>
                 </li>
                 </li>
                 <li class="nav-links">
-                    <a href="hocsinh.php">
+                    <a href="classView.php">
                         <i class="icon las la-graduation-cap"></i>
-                        <span class="text nav-text">Học viên</span>
+                        <span class="text nav-text">Lớp học</span>
                     </a>
                 </li>
                 

@@ -1,7 +1,6 @@
 <?php
-    
+require_once 'database/connDB.php';
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -37,3 +36,7 @@
     
 </body>
 </html>
+
+<?php
+    $conn->close(); 
+?>
