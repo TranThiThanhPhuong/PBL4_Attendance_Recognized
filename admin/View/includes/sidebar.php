@@ -27,12 +27,6 @@
                         <span class="text nav-text">Điểm danh</span>
                     </a>
                 </li>
-                <li class="nav-links">
-                    <a href="schedulerView.php">
-                        <i class="icon las la-calendar"></i>
-                        <span class="text nav-text">Lịch học</span>
-                    </a>
-                </li>
                 </li>
                 <li class="nav-links">
                     <a href="classView.php">

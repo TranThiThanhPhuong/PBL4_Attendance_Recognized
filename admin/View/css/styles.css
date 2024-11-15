@@ -4,6 +4,7 @@
     --body-color: #e4e9f7;
     --sidebar-color: #fff;
     --primary--color: #DD2F6E;
+    --timetable-color: #ef6497;
     --primary--color-light: #f6f5ff;
     --toggle-color: #ddd;
     --text-color: #707070;
@@ -38,6 +39,7 @@ body.dark {
     --body-color: #1D2231;
     --sidebar-color: #191c29;
     --primary--color: #db2727;
+    --timetable-color: #f14a4a;
     --primary--color-light: #e2edf8;
     --toggle-color: #fff;
     --text-color: #ccc;
@@ -152,7 +154,7 @@ body.dark .sidebar.close header .toggle {
 
 .sidebar li {
     height: 40px;
-    margin-top: 30px;
+    margin-top: 40px;
     list-style: none;
     display: flex;
     align-items: center;
@@ -403,6 +405,7 @@ body.dark .user button:hover {
     box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
     display: flex;
+    margin-bottom: 20px;
 }
 
 .countCard {
@@ -879,6 +882,10 @@ form .text-info .select-capdo:visited, .select-lop:visited {
 
 .weeks {
     align-items: center;
+    background: var(--sidebar-color);
+    margin-bottom: 20px;
+    width: 730px;
+    border-radius: 10px;
 }
 
 li, ul {
@@ -888,19 +895,32 @@ li, ul {
 .week-list {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    align-items: center;
+    padding: 10px;
 }
 
 .btnWeek {
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     color: #fff;
     font-size: 20px;
     cursor: pointer;
-    border-radius: 50%;
     background: var(--primary--color);
     outline: none;
-    border: none;
+    border: 2px double rgb(252, 247, 249);
+    border-radius: 10px;
+}
+
+.btnWeek:hover {
+    background: var(--primary--color-light);
+    border: 2px double var(--primary--color);
+    color: var(--primary--color);
+}
+
+.btnWeek:focus {
+    background: var(--primary--color-light);
+    border: 2px double var(--primary--color);
+    color: var(--primary--color);
 }
 
 .calendar {
@@ -942,7 +962,7 @@ li, ul {
 
 
 .timetable thead {
-    background-color: var(--primary--color);
+    background-color: var(--timetable-color);
     color: white;
 }
 

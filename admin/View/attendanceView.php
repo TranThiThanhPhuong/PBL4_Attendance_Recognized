@@ -5,7 +5,7 @@
     $today = isset($_POST['today']) ? $_POST['today'] : date('Y-m-d'); 
     $id_day = $scheduledController->changeDatyToId($today);
     echo '<script>console.log("Converted iddays: ' . json_encode($id_day) . '");</script>';
-    $classDays = $scheduledController->getClassByIdDay(9);
+    $classDays = $scheduledController->getClassByIdDay($id_day);
 ?>
 
 

@@ -43,7 +43,7 @@
                             echo '<div class="studentCard">';
                                 echo '<img src="image/logostudent.png" alt="">';
                                 echo '<div class="info">';
-                                    echo '<p>' . htmlspecialchars($row["ID"]) .'</p>';
+                                    echo '<p>ID: ' . htmlspecialchars($row["ID"]) .'</p>';
                                     echo '<h5>' . htmlspecialchars($row["Ten"]) . '</h5>';
                                 echo '</div>';
                                 echo ' <button class="tick"><i class="las la-check"></i></button>';

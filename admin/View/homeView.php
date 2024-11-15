@@ -2,11 +2,20 @@
     require_once '../ConnDB/connDB.php';
     require_once '../Controller/studentsController.php';
     require_once '../Controller/classController.php';
+    require_once '../Controller/scheduledController.php';
 
     $classController = new ClassController();
     $classescount = $classController->countClasses();
     $studentsController = new StudentsController($connectionDB);
     $studentscount = $studentsController->countStudents();
+    $scheduledController = new ScheduledController();
+    $timetable = $scheduledController->getAllTime();
+    $weeks = $scheduledController->getAllWeek();
+    session_start();
+    if (isset($_POST["id_week"])) {
+        $_SESSION["id_week"] = $_POST["id_week"];
+    }
+    $id_week = isset($_SESSION["id_week"]) ? $_SESSION["id_week"] : null;
 ?>
 
 <!DOCTYPE html>
@@ -60,10 +69,102 @@
                 </div>
                 
             </div>
+
+            <section class="wrapper">
+                <div class="weeks">
+                    <?php
+                        if ($weeks) {
+                            echo '<ul class="week-list">';
+                            while ($row = $weeks->fetch_assoc()) {
+                                echo '
+                                    <li>
+                                        <form method="POST" action="">
+                                            <input name="id_week" type="hidden" value="' . htmlspecialchars($row['ID']) . '">
+                                            <button id="' . htmlspecialchars($row['ID']) . '" class="btnWeek" type="submit" value="' . htmlspecialchars($row['ID']) . '">' . htmlspecialchars($row['ID']) . '</button>
+                                        </form>
+                                    </li>';
+                            }
+                            echo '</ul>';
+                        }                    
+                    ?>
+                </div>
+
+                <div class="calendar" style="display: <?= $id_week ? 'block' : 'none' ?>;">
+                    <div class="timetable">
+                        <table>
+                            <thead>
+                                <?php
+                                    if ($id_week) {
+                                        $days = $scheduledController->getAllDayByIdWeek($id_week);
+                                        if (count($days) > 0) {
+                                            echo '<tr>';
+                                                echo '<th>Thời gian</th>';
+                                                
+                                            foreach ($days as $row) {
+                                                    echo '<th>' . htmlspecialchars($row['TenNgay']) . '</th>';
+                                            }
+                                            echo '</tr>';
+                                        }
+                                    }
+                                ?>
+                                <tr>
+                                    <th></th>
+                                    <th>Thứ hai</th>
+                                    <th>Thứ ba</th>
+                                    <th>Thứ tư</th>
+                                    <th>Thứ năm</th>
+                                    <th>Thứ sáu</th>
+                                    <th>Thứ bảy</th>
+                                    <th>Chủ nhật</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $timetableRows = [];
+                                    $timetableIds = [];
+                                    if ($timetable) {
+                                        foreach ($timetable as $time) {
+                                            $timetableRows[] = [
+                                                'id' => $time['ID'],
+                                                'start_time' => $time['GioBatDau'],
+                                                'end_time' => $time['GioKetThuc']
+                                            ];
+                                            $timetableIds[] = $time['ID'];
+                                        }
+                                    }
+                                    $classesForTimeSlots = [];
+                                    $todays = $scheduledController->getAllDayByIdWeek($id_week);
+                                    foreach ($todays as $today) {
+                                        foreach ($timetableIds as $timetableId) {
+                                            $classData = $scheduledController->getClassByIdDayandHour($today['ID'],  $timetableId);
+                                            $classesForTimeSlots[$timetableId][$today['ID']] = $classData ? htmlspecialchars($classData['TenLop']) : 'Trống';
+                                        }
+                                    }
+                                    foreach ($timetableRows as $timeRow) {
+                                        echo '<tr>';
+                                        echo '<td>' . htmlspecialchars($timeRow['start_time']) . '<span class="separator">-</span>' . htmlspecialchars($timeRow['end_time']) . '</td>';
+                                        foreach ($todays as $today) {
+                                            if (isset($classesForTimeSlots[$timeRow['id']][$today['ID']])) {
+                                                echo '<td>' . $classesForTimeSlots[$timeRow['id']][$today['ID']] . '</td>';
+                                            }
+                                        }
+                                        echo '</tr>';
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
         </section>
+
+        
     </section>
 
     <script src="javascript/toggle.js"></script>
+    <script src="javascript/scheduled.js"></script>
 
 </body>
 </html>
