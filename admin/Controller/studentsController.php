@@ -17,6 +17,22 @@
             }
         }
 
+        public function countStudents() {
+            try {
+                $countStudent = $this->model->countStudents();
+                return [
+                    'success' => true,
+                    'student_count' => $countStudent
+                ];
+            } catch (Exception $e) {
+                echo "Error: " . $e->getMessage();
+                return [
+                    'success' => false,
+                    'student_count' => 0
+                ];
+            }
+        }        
+
         public function showInfoStudent($id_hv) {
             try {
                 $students = $this->model->showInfoStudent($id_hv);

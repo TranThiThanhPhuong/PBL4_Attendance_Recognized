@@ -14,5 +14,20 @@
             }
             return $result;
         }
+
+        public function login($username, $password) {
+            $query = "SELECT * FROM admin WHERE username = ? AND password = ?";
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Statement preparation failed: " . $this->connection->error);
+            }
+            $stmt->bind_param("ss", $username, $password);
+
+            if (!$stmt->execute()) {
+                throw new Exception("Execute statement failed: " . $stmt->error);
+            }
+            $result = $stmt->get_result();
+            return $result->num_rows > 0;
+        }
     }
 ?>

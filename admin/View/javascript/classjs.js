@@ -22,9 +22,6 @@ const btnView = document.querySelectorAll(".btnView"),
 btnView.forEach(button => {
     button.addEventListener("click", function (event) {
         event.preventDefault(); 
-        const id_lop = button.getAttribute("data-idlop");
-        // console.log(id_lop);
-        btnNew.setAttribute("id_lop", id_lop); 
         const form = button.closest("form"); 
         const formData = new FormData(form);
 
@@ -116,26 +113,6 @@ attendanceList.addEventListener("click", function (event) {
             })
             .catch(error => console.error('Error fetching student info:', error));
     } 
-    else if (button.classList.contains("btnNew")) {
-        const id = btnNew.getAttribute("id_lop");
-        fetch(`addNewStudent.php?id_lop=${id}`)
-            .then(response => { 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`); 
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                } else {
-                    alert(data.message || 'Có lỗi xảy ra khi xóa học viên.'); // Show error message if provided
-                }
-            })
-            .catch(error => console.error('Error fetching student info:', error));
-        attendanceList.classList.add("dimmed");
-        user.classList.add("dimmed");
-        themhocvien.style.display = "block"; 
-    }
 
     else if (button.classList.contains("btntrash")) {
         attendanceList.classList.add("dimmed");
@@ -145,6 +122,14 @@ attendanceList.addEventListener("click", function (event) {
         btnYes.setAttribute("data-idHV", id);
     }
 });
+
+btnNew.addEventListener("click", function(event){
+        event.preventDefault();
+        mainCard.classList.add("dimmed");
+        user.classList.add("dimmed");
+        themhocvien.style.display = "block"; 
+    }
+)
 
 btnNo.addEventListener("click", function () {
     attendanceList.classList.remove("dimmed"); 
@@ -176,7 +161,9 @@ btnYes.addEventListener("click", function () {
     confirmBox.classList.add("hidden");
 });
 
-
+btnSave.addEventListener("click", function(event) {
+    document.getElementById("addForm").submit();
+})
 
 btnClose.addEventListener("click", function () {
     xemthongtin.style.display = "none";
@@ -192,6 +179,6 @@ btnClose1.addEventListener("click", function () {
 
 btnClose2.addEventListener("click", function () {
     themhocvien.style.display = "none";
-    attendanceList.classList.remove("dimmed"); 
+    mainCard.classList.remove("dimmed"); 
     user.classList.remove("dimmed"); 
 });

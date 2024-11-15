@@ -17,5 +17,15 @@
                 return null;
             }
         }
+
+        public function login($username, $password) {
+            try {
+                return $this->model->login($username, $password); 
+            } catch (Exception $e) {
+                error_log("Error during login: " . $e->getMessage());
+                return false;
+            }
+        }
+        
     }
 ?>

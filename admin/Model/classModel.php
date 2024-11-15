@@ -22,5 +22,21 @@
             $result = $stmt->get_result();
             return $result->fetch_assoc();
         }
+
+        public function countClasses() {
+            $query = "SELECT COUNT(*) AS count FROM lop";
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed: " . $this->connection->error);
+            }
+            if (!$stmt->execute()) {
+                throw new Exception("Execute statement failed: " . $stmt->error);
+            }
+            $count = 0;
+            $stmt->bind_result($count);
+            $stmt->fetch();
+            $stmt->close();
+            return $count;
+        }
     }
 ?>

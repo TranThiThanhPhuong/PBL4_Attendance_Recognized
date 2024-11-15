@@ -15,11 +15,11 @@ modeswitch.addEventListener("click", () => {
 
     if (body.classList.contains("dark")){
         modetext.innerText = "Light";
-        logoImg.src = "../image/Nihongo.png"; 
+        logoImg.src = "image/Nihongo.png"; 
     }
     else {
         modetext.innerText = "Dark";
-        logoImg.src = "../image/Nihongo2.png"; 
+        logoImg.src = "image/Nihongo2.png"; 
     }
 
 });

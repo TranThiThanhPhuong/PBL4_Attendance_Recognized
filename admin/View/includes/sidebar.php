@@ -2,7 +2,7 @@
     <header>
         <div class="image-text">
             <span class="image">
-                <img id="logo-img" src="../image/Nihongo2.png" alt="logo">
+                <img id="logo-img" src="image/Nihongo2.png" alt="logo">
             </span>
 
             <div class="text header-text">
@@ -45,7 +45,7 @@
         </div>
         <div class="bottom-content">
             <li class="logout">
-                <a href="login.php">
+                <a href="logout.php">
                     <i class="icon las la-sign-out-alt"></i>
                     <span class="text nav-text">Đăng xuất</span>
                 </a>

@@ -7,7 +7,7 @@
 
 <div class="user">
     <div class="user-div">
-        <img src="../image/logostudent.png">
+        <img src="image/logostudent.png">
         <div class="user-div1">
             <?php
             if ($admin) {

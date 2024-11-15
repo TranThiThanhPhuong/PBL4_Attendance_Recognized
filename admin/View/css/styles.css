@@ -3,10 +3,11 @@
 :root {
     --body-color: #e4e9f7;
     --sidebar-color: #fff;
-    --primary--color: #695cfe;
+    --primary--color: #DD2F6E;
     --primary--color-light: #f6f5ff;
     --toggle-color: #ddd;
     --text-color: #707070;
+    --color-card: #e7e5fb;
 
     --tran-02: all 0.2s ease;
     --tran-03: all 0.3s ease;
@@ -34,12 +35,13 @@ body {
 }
 
 body.dark {
-    --body-color: #18191a;
-    --sidebar-color: #242526;
-    --primary--color: #ba3939;
+    --body-color: #1D2231;
+    --sidebar-color: #191c29;
+    --primary--color: #db2727;
     --primary--color-light: #e2edf8;
     --toggle-color: #fff;
     --text-color: #ccc;
+    --color-card: #fffafe;
 }
 
 /* ====SIDEBAR====*/
@@ -122,7 +124,7 @@ header .image-text .header-text{
 body.dark .sidebar header .toggle {
     transform: translateY(-50%) rotate(180deg);
     color: var(--text-color);
-    background: #ba3939;
+    background: var(--primary--color);
 }
 
 .sidebar.close header .toggle {
@@ -131,7 +133,7 @@ body.dark .sidebar header .toggle {
 
 body.dark .sidebar.close header .toggle {
     transform:  translateY(-50%) ;
-    background: #ba3939;
+    background: var(--primary--color);
 }
 
 /* ====MENU-BAR==== */
@@ -190,7 +192,7 @@ body.dark .sidebar.close header .toggle {
 }
 
 body.dark .sidebar a.active-link { 
-    background-color: #ba3939;
+    background-color: var(--primary--color);
     color: #fff;
 }
 
@@ -199,7 +201,7 @@ body.dark .sidebar a.active-link {
 }
 
 body.dark .sidebar li a:hover {
-    background: #ba3939;
+    background: var(--primary--color);
 }
 
 .sidebar li a:hover .icon, 
@@ -324,6 +326,7 @@ body.dark .switch::before {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    height: 100%;
 }
 
 .user {
@@ -388,6 +391,60 @@ body.dark .switch::before {
 
 body.dark .user button:hover {
     background: var(--primary--color);
+}
+
+/* HOMEVIEW */
+
+.countCards {
+    background: var(--primary--color-light);
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.countCard {
+    background-color: var(--color-card);
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 20px;
+    width: 33%;
+    height: 120px;
+    transition: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 20px;
+}
+
+.countCard:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card-main {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.countCard  h3 {
+    font-size: 20px;
+    color: var(--primary--color);
+    text-transform: none;
+}
+
+.countCard  h1 {
+    font-size: 30px;
+    color: var(--primary--color);
+    margin-top: 10px;
+}
+
+.countCard i {
+    font-size: 70px;
+    color: var(--primary--color);
+    font-weight:bold;
 }
 
 /* ====ATTENDANCE-HOME */
@@ -721,6 +778,11 @@ form .text-info .select-capdo, .select-lop {
     border-radius: 5px;
     color: #fff;
     outline: none;
+    margin-left: 40px;
+}
+
+.select-lop {
+    margin-left: 20px;
 }
 
 form .text-info .select-capdo:visited, .select-lop:visited {
@@ -813,62 +875,10 @@ form .text-info .select-capdo:visited, .select-lop:visited {
     border-color: #c3e6cb;
 }
 
-/* .calendar {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 350px;
-}
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-} */
-.calendar-header h2 {
-    margin: 0;
-    font-size: 24px;
-}
-.calendar-header button {
-    background-color: #e74c3c;
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.calendar-header button:focus {
-    outline: none;
-}
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-}
-.calendar-grid div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    border-radius: 5px;
-    font-size: 16px;
-}
-.calendar-grid .day {
-    background-color: #f0f0f0;
-}
-.calendar-grid .day.selected {
-    background-color: #e74c3c;
-    color: white;
-}
-.calendar-grid .day.disabled {
-    color: #ccc;
-}
-
 /* SCHEDULERVIEW */
 
-.scheduled {
-    align-items: flex-start;
+.weeks {
+    align-items: center;
 }
 
 li, ul {
@@ -881,7 +891,7 @@ li, ul {
     margin-bottom: 20px;
 }
 
-.btn-week-choose {
+.btnWeek {
     width: 50px;
     height: 50px;
     color: #fff;
@@ -911,25 +921,21 @@ li, ul {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
-    width: 120px;
     font-size: 16px;
     font-family: 'Poppins', sans-serif;
-}
-
-.timetable .time {
-    width: 200px;
+    width: 150px;
 }
 
 .timetable td { 
     border: 1px solid #ddd;
-    padding: 12px;
+    padding: 15px 3px;
     text-align: center;
     font-size: 14px;
     font-family: 'Poppins', sans-serif;
 } 
 
 .separator {
-    margin: 0 12px;
+    margin: 0 7px;
     font-weight: bold;
     color: #555;
 }
@@ -951,3 +957,193 @@ li, ul {
 .timetable td {
     font-size: 14px;
 }
+
+/* ATTENDANCE VIEW */
+
+.attendance {
+    background: var(--primary--color-light);
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.attendance .title {
+    padding: 16px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.attendance .title input {
+    margin-left: 3px;
+    font-size: 14px;
+    color: rgb(222, 112, 123);
+}
+
+.classes table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+}
+
+.classes th{
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    width: 120px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.classes td { 
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+} 
+
+.classes thead {
+    background-color: var(--primary--color);
+    color: white;
+}
+
+.classes tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.classes tbody tr:hover {
+    background-color: #ddd;
+}
+
+.classes td {
+    font-size: 14px;
+}
+
+.classes table button {
+    padding: 4px 5px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--primary--color);
+    border: 1px solid var(--primary--color-light);
+    color: #fff;
+}
+
+.classes table button:hover {
+    background: var(--primary--color-light);
+    border: 1px solid var(--primary--color);
+    color: var(--primary--color);
+    transition: 0.5rem;
+}
+
+/* CAMERA */
+
+.checkcam {
+    background: var(--primary--color-light);
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    display: inline-block;
+
+}
+
+.list-button {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    margin-bottom: 25px;
+}
+
+.list-button button {
+    padding: 10px;
+    width: 150px;
+    background-color: var(--primary--color);
+    color: #fff;
+    margin: 0 3px;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+}
+
+.list-button button:hover {
+    background-color: #ece9e9;
+    color: #000;
+}
+
+.list-button button:focus {
+    background-color: #ece9e9;
+    color: #000;
+} 
+
+.studentCards {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 40px 35px;
+}
+
+.studentCard {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    position: relative;
+    width: 22%; 
+    height: 88px;
+    background: var(--color-card);
+    border-radius: 10px;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+.studentCard img {
+    width: 40px;
+    height: 40px;
+}
+
+.studentCard .info {
+    display: inline;
+    flex-direction: column;
+}
+
+.studentCard .info p {
+    font-size: 15px;
+}
+
+.studentCard .info h5 {
+    font-size: 12px;
+}
+
+.studentCard .tick {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    top: -15px;
+    right: -10px;
+    background-color: var(--primary--color);
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    border: 1px solid #fff;
+}
+
+.tick i {
+    font-size: 18px;
+    color: var(--primary--color-light);
+}
+
+/* SHOWCAM HOC VIEN */
+
+.wapper-capture {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+

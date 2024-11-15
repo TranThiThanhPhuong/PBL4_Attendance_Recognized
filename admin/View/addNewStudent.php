@@ -15,13 +15,12 @@
             echo json_encode(['success' => false, 'message' => 'Invalid email format']);
             exit();
         }
-
         $studentsController = new StudentsController($connectionDB);
 
         try {
             $studentsController->addNewStudent($ten, $gender, $date, $email, $address, $id_lop);
             
-            header("Location: classView.php");
+            header("Location: showCamera.php");
             exit();
         } catch (Exception $e) {
             error_log($e->getMessage()); 
@@ -31,3 +30,4 @@
         echo json_encode(['success' => false, 'message' => 'Missing required form data']);
     }
 ?>
+

@@ -7,7 +7,7 @@
         }
     
         public function getAllStudentInClass($id_lop) {
-            $query = "SELECT hv.ID, hv.Ten, hv.NgaySinh
+            $query = "SELECT hv.ID, hv.Ten, hv.NgaySinh, hv.ID_Lop
                       FROM hocvien AS hv
                       JOIN lop ON hv.ID_Lop = lop.ID
                       WHERE lop.ID = ?";
@@ -19,6 +19,22 @@
             }
             $result = $stmt->get_result();
             return $result->fetch_all(MYSQLI_ASSOC); 
+        }
+
+        public function countStudents() {
+            $query = "SELECT COUNT(*) AS count FROM hocvien";
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed: " . $this->connection->error);
+            }
+            if (!$stmt->execute()) {
+                throw new Exception("Execute statement failed: " . $stmt->error);
+            }
+            $count = 0;
+            $stmt->bind_result($count);
+            $stmt->fetch();
+            $stmt->close();
+            return $count;
         }
 
         public function showInfoStudent($id_hv) {

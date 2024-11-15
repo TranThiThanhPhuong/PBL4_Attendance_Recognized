@@ -30,5 +30,21 @@
                 return null;
             }
         }
+
+        public function countClasses() {
+            try {
+                $countClasses = $this->model->countClasses();
+                return [
+                    'success' => true,
+                    'class_count' => $countClasses
+                ];
+            } catch (Exception $e) {
+                echo "Error: " . $e->getMessage();
+                return [
+                    'success' => false,
+                    'class_count' => 0
+                ];
+            }
+        }      
     }
 ?>

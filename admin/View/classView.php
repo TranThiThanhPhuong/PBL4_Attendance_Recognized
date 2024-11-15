@@ -40,22 +40,22 @@
                                             <div class="detail">
                                                 <h3>' . htmlspecialchars($row['TenLop']) . '</h3>
                                             </div>
-                                            <form class="form_getIDClass" method="POST" action="">
-                                                <input data-idlop='. htmlspecialchars($row['ID']) .' type="hidden" name="id_lop" value="'. htmlspecialchars($row['ID']) .'">
-                                                <button id="'. htmlspecialchars($row['ID']) . '" type="submit" class="btnView">View</button>
+                                            <form class="" method="POST" action="">
+                                                <input type="hidden" name="id_lop" value="'. htmlspecialchars($row['ID']) .'">
+                                                <button data-idlop='. htmlspecialchars($row['ID']) .' id="'. htmlspecialchars($row['ID']) . '" type="submit" class="btnView">View</button>
                                             </form>
                                         </div>';
                             $cardCounter++;
                         }
                         echo '</div>';
                     }
+                    echo '<button class="btnNew"><i class="las la-plus-circle"></i>New</button>';
                 ?>
             </div>
 
             <div class="attendance-list" style="display: none;">
                 <div class="title">
                     <h1>Danh sách tất cả các học viên</h1>
-                    <button class="btnNew" data-idlop="<?php echo htmlspecialchars($id_lop); ?>><i class="las la-plus-circle"></i>New</button>
                 </div>
                 <table class="table">
                     <thead>
@@ -69,7 +69,12 @@
                     <tbody>
                         <?php
                             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_lop'])) {
-                                $id_lop = $connectionDB->real_escape_string($_POST['id_lop']); 
+                                try {
+                                    $id_lop = $connectionDB->real_escape_string($_POST['id_lop']); 
+                                    echo $id_lop;
+                                } catch (Exception $e){
+                                    echo  $e;
+                                }
                                 $students = $studentsController->getAllStudentInClass($id_lop);
                                 if (count($students) > 0) {
                                     foreach ($students as $row) {
@@ -102,9 +107,6 @@
                     <button class="btnClose"><i class="las la-times"></i></button>
                 </div>
                 <form class="main-info">
-                    <div class="img-face">
-                        <img src="" alt="">
-                    </div>
                     <div class="text-info">
                         <div>
                             <label for="idxem">ID:</label>
@@ -146,9 +148,6 @@
                     </div>
                 </div>
                 <form class="main-info" id="editForm" method="POST" action="updateInfoStudent.php">
-                    <div class="img-face">
-                        <img src="" alt="">
-                    </div>
                     <div class="text-info">
                         <div>
                             <label for="idsua">ID:</label>
@@ -192,15 +191,11 @@
                         <button class="btnClose2"><i class="las la-times"></i></button>
                     </div>
                 </div>
-                
                 <form class="main-info"  id="addForm" method="POST" action="addNewStudent.php">
-                    <div class="img-face">
-                        <a href=""><i class="las la-upload"></i>Import <br> picture</a>
-                    </div>
                     <div class="text-info">
                         <div>
                             <label for="tenthem">Họ và tên:</label>
-                            <input type="text" name="ten_them" id="tenthem">
+                            <input type="text" name="ten_them" id="tenthem" require>
                         </div>
                         <div class="gender">
                             <label for="genderthem">Giới tính:</label>
@@ -211,19 +206,29 @@
                         </div>
                         <div>
                             <label for="datethem">Ngày sinh:</label>
-                            <input type="date" name="date_them" id="datethem">
+                            <input type="date" name="date_them" id="datethem" require>
                         </div>
                         <div>
                             <label for="emailthem">E-mail:</label>
-                            <input type="email" name="email_them" id="emailthem">
+                            <input type="email" name="email_them" id="emailthem"  require>
                         </div>
                         <div>
-                            <laiyg9bel for="diachithem">Địa chỉ</laiyg9bel>
-                            <input type="text" name="diachi_them" id="diachithem">
+                            <label for="diachithem">Địa chỉ</label>
+                            <input type="text" name="diachi_them" id="diachithem" require>
                         </div>
-                        <input type="hidden" name="id_lop" value="">
-                        <input type="hidden" name="id_capdo" value="">
-                        <button type="submit" class="btnSave">Lưu</button>
+                        <div style="display: flex;">
+                            <label for="select-lop">Chọn lớp:</label>
+                            <?php
+                                $classes->data_seek(0);
+                                echo '<select class="select-lop" name="id_lop" id="select-lop"  require>';
+                                    echo '<option value="" disabled selected>Chọn lớp</option>';
+                                while ($row = $classes->fetch_assoc()){
+                                    echo '<option value="'. htmlspecialchars($row["ID"]) .'">'. htmlspecialchars($row["TenLop"]) .'</option>';
+                                }
+                                echo '</select>';
+                            ?>
+                        </div>
+                        <button type="submit" class="btnSave">Chụp ảnh</button>
                     </div>
                 </form>
             </section>  

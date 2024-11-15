@@ -3,6 +3,12 @@
     
     $scheduledController = new ScheduledController();
     $timetable = $scheduledController->getAllTime();
+    $weeks = $scheduledController->getAllWeek();
+    session_start();
+    if (isset($_POST["id_week"])) {
+        $_SESSION["id_week"] = $_POST["id_week"];
+    }
+    $id_week = isset($_SESSION["id_week"]) ? $_SESSION["id_week"] : null;
 ?>
 
 <!DOCTYPE html>
@@ -24,98 +30,94 @@
 
         <section class="wrapper">
             <div class="weeks">
-                <ul class="week-list">
-                    <li>
-                        <button class="btn-week-choose" type="submit">1</button>
-                    </li>
-                    <li>
-                        <button class="btn-week-choose" type="submit">2</button>
-                    </li>
-                    <li>
-                        <button class="btn-week-choose" type="submit">3</button>
-                    </li>
-                    <li>
-                        <button class="btn-week-choose" type="submit">4</button>
-                    </li>
-                </ul>
+                <?php
+                    if ($weeks) {
+                        echo '<ul class="week-list">';
+                        while ($row = $weeks->fetch_assoc()) {
+                            echo '
+                                <li>
+                                    <form method="POST" action="">
+                                        <input name="id_week" type="hidden" value="' . htmlspecialchars($row['ID']) . '">
+                                        <button id="' . htmlspecialchars($row['ID']) . '" class="btnWeek" type="submit" value="' . htmlspecialchars($row['ID']) . '">' . htmlspecialchars($row['ID']) . '</button>
+                                    </form>
+                                </li>';
+                        }
+                        echo '</ul>';
+                    }                    
+                ?>
             </div>
 
-            <div class="calendar">
+            <div class="calendar" style="display: <?= $id_week ? 'block' : 'none' ?>;">
                 <div class="timetable">
                     <table>
                         <thead>
+                            <?php
+                                if ($id_week) {
+                                    $days = $scheduledController->getAllDayByIdWeek($id_week);
+                                    if (count($days) > 0) {
+                                        echo '<tr>';
+                                            echo '<th>Thời gian</th>';
+                                             
+                                        foreach ($days as $row) {
+                                                echo '<th>' . htmlspecialchars($row['TenNgay']) . '</th>';
+                                        }
+                                        echo '</tr>';
+                                    }
+                                }
+                            ?>
                             <tr>
-                                <th class="time">Thời Gian</th>
-                                <th>Thứ Hai</th>
-                                <th>Thứ Ba</th>
-                                <th>Thứ Tư</th>
-                                <th>Thứ Năm</th>
-                                <th>Thứ Sáu</th>
-                                <th>Thứ Bảy</th>
+                                <th></th>
+                                <th>Thứ hai</th>
+                                <th>Thứ ba</th>
+                                <th>Thứ tư</th>
+                                <th>Thứ năm</th>
+                                <th>Thứ sáu</th>
+                                <th>Thứ bảy</th>
                                 <th>Chủ nhật</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
+                                $timetableRows = [];
+                                $timetableIds = [];
                                 if ($timetable) {
-                                    foreach ($timetable as $row) {
-                                        echo '<tr data-id="' . htmlspecialchars($row['ID']) . '">';
-                                            echo '<td>' . htmlspecialchars($row['GioBatDau']) . '<span class="separator">-</span>' . htmlspecialchars($row['GioKetThuc']) . '</td>';
-                                        echo '</tr>';
+                                    foreach ($timetable as $time) {
+                                        $timetableRows[] = [
+                                            'id' => $time['ID'],
+                                            'start_time' => $time['GioBatDau'],
+                                            'end_time' => $time['GioKetThuc']
+                                        ];
+                                        $timetableIds[] = $time['ID'];
                                     }
-                                }                                
-                                echo '</ul>';
+                                }
+                                $classesForTimeSlots = [];
+                                $todays = $scheduledController->getAllDayByIdWeek($id_week);
+                                foreach ($todays as $today) {
+                                    foreach ($timetableIds as $timetableId) {
+                                        $classData = $scheduledController->getClassByIdDayandHour($today['ID'],  $timetableId);
+                                        $classesForTimeSlots[$timetableId][$today['ID']] = $classData ? htmlspecialchars($classData['TenLop']) : 'Trống';
+                                    }
+                                }
+                                foreach ($timetableRows as $timeRow) {
+                                    echo '<tr>';
+                                    echo '<td>' . htmlspecialchars($timeRow['start_time']) . '<span class="separator">-</span>' . htmlspecialchars($timeRow['end_time']) . '</td>';
+                                    foreach ($todays as $today) {
+                                        if (isset($classesForTimeSlots[$timeRow['id']][$today['ID']])) {
+                                            echo '<td>' . $classesForTimeSlots[$timeRow['id']][$today['ID']] . '</td>';
+                                        }
+                                    }
+                                    echo '</tr>';
+                                }
                             ?>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- <div class="calendar">
-                <div class="calendar-header">
-                    <button>&lt;</button>
-                    <h2>May 2023</h2>
-                    <button>&gt;</button>
-                </div>
-                <div class="calendar-grid">
-                    <div class="day disabled">30</div>
-                    <div class="day">1</div>
-                    <div class="day">2</div>
-                    <div class="day">3</div>
-                    <div class="day">4</div>
-                    <div class="day">5</div>
-                    <div class="day">6</div>
-                    <div class="day">7</div>
-                    <div class="day selected">8</div>
-                    <div class="day">9</div>
-                    <div class="day">10</div>
-                    <div class="day">11</div>
-                    <div class="day">12</div>
-                    <div class="day">13</div>
-                    <div class="day">14</div>
-                    <div class="day">15</div>
-                    <div class="day">16</div>
-                    <div class="day">17</div>
-                    <div class="day selected">18</div>
-                    <div class="day">19</div>
-                    <div class="day">20</div>
-                    <div class="day">21</div>
-                    <div class="day">22</div>
-                    <div class="day">23</div>
-                    <div class="day">24</div>
-                    <div class="day">25</div>
-                    <div class="day">26</div>
-                    <div class="day">27</div>
-                    <div class="day">28</div>
-                    <div class="day">29</div>
-                    <div class="day">30</div>
-                    <div class="day">31</div>
-                    <div class="day disabled">1</div>
-                    <div class="day disabled">2</div>
-                    <div class="day disabled">3</div>
-                </div>
-            </div> -->
         </section>
+        
     <script src="javascript/toggle.js"></script>
+    <script src="javascript/scheduled.js"></script>
+
 </body>
 </html>

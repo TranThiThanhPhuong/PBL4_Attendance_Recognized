@@ -2,7 +2,7 @@
     $server = 'localhost';
     $user = 'root';
     $pass = '';
-    $database = 'databasepbl4';
+    $database = 'pbl4_mvc';
 
     $connectionDB = new mysqli($server, $user, $pass, $database);
 
