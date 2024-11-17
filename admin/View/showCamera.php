@@ -1,7 +1,3 @@
-<?php
-// // Khởi động file Python khi truy cập trang web
-// exec("/home/pi/PBL4_env/bin/python3 /home/pi/Desktop/python_PBL4/web_image_capture.py > /dev/null &");
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +47,13 @@
         .btn-list .btnChup:focus, .btnLuuAnh:focus {
             background-color: #db2727;
         }
+
+        #cameraFeed {
+            width: 640px;
+            height: 480px;
+            border: 1px solid black;
+        }
+
     </style>
 </head>
 <body>
@@ -61,17 +64,31 @@
             </div>
             <div class="btn-list">
                 <button class="btnChup" id="captureButton">Chụp</button>
-                <button class="btnLuuAnh" id="endButton">Lưu</button>
             </div>
         </div>
     </section>
 
     <script>
-        const btnLuuAnh =document.querySelector(".btnLuuAnh");
-        btnLuuAnh.addEventListener("click", function(event){
-            window.location.href = "classView.php";
-        })
-           
+        const ws = new WebSocket("ws://192.168.4.48:8765");
+        ws.onmessage = (event) => {
+            if (typeof event.data === "string") {
+                if (event.data === "captured") {
+                    alert("Đã chụp 20 ảnh thành công!");
+                } else if (event.data === "stopped") {
+                    alert("Đã dừng kết nối WebSocket");
+                    window.location.href = "classView.php";
+                    alert("Lưu học sinh thành công");
+                }
+            } else {
+                const blob = new Blob([event.data], { type: "image/jpeg" });
+                const url = URL.createObjectURL(blob);
+                document.getElementById("cameraFeed").src = url;
+            }
+        };
+        document.getElementById("captureButton").onclick = () => {
+            ws.send("capture");
+            ws.send("end");
+        };
     </script>
 
     <!-- <script>

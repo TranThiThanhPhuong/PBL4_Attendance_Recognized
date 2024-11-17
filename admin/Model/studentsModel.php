@@ -111,6 +111,10 @@
             }            
             return $stmt->affected_rows > 0; 
         }
+
+        public function saveDiscordAttendance() {
+            
+        }
     }
 
 ?>
