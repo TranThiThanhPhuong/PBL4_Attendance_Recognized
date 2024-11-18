@@ -884,8 +884,12 @@ form .text-info .select-capdo:visited, .select-lop:visited {
     align-items: center;
     background: var(--sidebar-color);
     margin-bottom: 20px;
-    width: 730px;
+    width: 100%;
     border-radius: 10px;
+}
+
+.weeks p {
+    text-transform: capitalize;
 }
 
 li, ul {
@@ -909,6 +913,11 @@ li, ul {
     outline: none;
     border: 2px double rgb(252, 247, 249);
     border-radius: 10px;
+}
+
+.btnweekColor {
+    background: var(--primary--color-light);
+    border: 2px double var(--primary--color);
 }
 
 .btnWeek:hover {
@@ -962,7 +971,7 @@ li, ul {
 
 
 .timetable thead {
-    background-color: var(--timetable-color);
+    background-color: var(--primary--color);
     color: white;
 }
 
@@ -999,6 +1008,27 @@ li, ul {
     margin-left: 3px;
     font-size: 14px;
     color: rgb(222, 112, 123);
+}
+
+.btnAttendance {
+    padding: 10px;
+    width: 150px;
+    background-color: var(--primary--color);
+    color: #fff;
+    margin: 0 3px;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+}
+
+.btnAttendance:hover {
+    background-color: #ece9e9;
+    color: #000;
+}
+
+.btnAttendance:focus {
+    background-color: #ece9e9;
+    color: #000;
 }
 
 .classes table {

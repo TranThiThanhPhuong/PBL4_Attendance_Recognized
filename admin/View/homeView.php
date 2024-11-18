@@ -75,6 +75,7 @@
                     <?php
                         if ($weeks) {
                             echo '<ul class="week-list">';
+                            echo '<p>Chọn tuần học: </p>';
                             while ($row = $weeks->fetch_assoc()) {
                                 echo '
                                     <li>
@@ -163,8 +164,22 @@
         
     </section>
 
+    <script>
+        const btnWeek = document.querySelectorAll(".btnWeek"),
+        showday = document.getElementById("showday"),
+        calendar = document.querySelector(".calendar");
+
+        btnWeek.forEach(button => {
+            button.addEventListener("click", function(event){
+                event.preventDefault();
+                button.classList.add("btnweekColor");
+                this.closest("form").submit();
+                calendar.style.display = "block";
+            });
+        });
+    </script>
+
     <script src="javascript/toggle.js"></script>
-    <script src="javascript/scheduled.js"></script>
 
 </body>
 </html>

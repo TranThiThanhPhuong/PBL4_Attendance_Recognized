@@ -7,7 +7,7 @@
         }
     
         public function getAllStudentInClass($id_lop) {
-            $query = "SELECT hv.ID, hv.Ten, hv.NgaySinh, hv.ID_Lop
+            $query = "SELECT hv.ID, hv.Ten, hv.NgaySinh, hv.ID_Lop, hv.Email
                       FROM hocvien AS hv
                       JOIN lop ON hv.ID_Lop = lop.ID
                       WHERE lop.ID = ?";
@@ -112,9 +112,7 @@
             return $stmt->affected_rows > 0; 
         }
 
-        public function saveDiscordAttendance() {
-            
-        }
+        
     }
 
 ?>

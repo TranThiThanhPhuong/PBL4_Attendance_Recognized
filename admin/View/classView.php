@@ -151,7 +151,7 @@
                     <div class="text-info">
                         <div>
                             <label for="idsua">ID:</label>
-                            <input type="text" name="id_hv" id="idsua">
+                            <input type="text" name="id_hv" id="idsua" readonly>
                             <!-- <input type="text" id="idsua_display" disabled>  -->
                         </div>
                         <div>

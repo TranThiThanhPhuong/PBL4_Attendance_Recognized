@@ -8,6 +8,7 @@
     } else {
         echo "Không tìm thấy ID lớp.";
     }
+    
     if (!empty($students)) {
 ?>
 
@@ -23,28 +24,34 @@
 
     <style>
         .studentCard #check {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        position: absolute;
-        top: -15px;
-        right: -10px;
-        background-color: var(--primary--color);
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        border: 1px solid #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            background-color: var(--primary--color);
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            border: 1px solid #fff;
         }
 
         #check i {
-        font-size: 18px;
-        color: var(--primary--color-light);
+            font-size: 18px;
+            color: var(--primary--color-light);
         }
 
         #check.active {
-            background-color: #ff5656;
+            background-color: yellow !important;
             color: black;
         }
+
+        #check.active i {
+            font-size: 18px;
+            color: black;
+        }
+
     </style>
 </head>
 <body>
@@ -58,9 +65,10 @@
                 <div class="containerVideo">
                     <img id="cameraFeed" alt="Camera Feed" style="max-width: 100%; height: auto;"/>
                     <h4 id="detectedName">ID: Unknown</h4>
+                    <h4 id="detectedTime">Time: </h4>
                 </div>
                 <div class="list-button">
-                    <button class="btnCheck">Điểm danh</button>
+                    <button class="btnshowclasses">Điểm danh</button>
                 </div>
                 <div class="studentCards" style="display: none">
                     <?php
@@ -70,14 +78,22 @@
                             echo '<div class="studentCard">';
                                 echo '<img src="image/logostudent.png" alt="">';
                                 echo '<div class="info">';
-                                    echo '<small>'.$stt.'</small>';
+                                    echo '<small>STT: '.$stt.'</small>';
                                     echo '<p id="idStudent">ID: ' . htmlspecialchars($row["ID"]) .'</p>';
                                     echo '<h5>' . htmlspecialchars($row["Ten"]) . '</h5>';
+                                    // echo '<h5>' . htmlspecialchars($row["Email"]) . '</h5>';
                                 echo '</div>';
                                 echo ' <button id="check"><i class=" icon las la-check"></i></button>';
                             echo '</div>';
                         }
                     ?>
+                    <form action="saveDiscord.php" method="post" id="attendanceForm">
+                        <input type="hidden" name="studentsPresent" id="studentsPresent">
+                        <input type="hidden" name="studentsAbsent" id="studentsAbsent">
+                        <div class="list-button">
+                            <button class="btnsave">Save Discord Attendance</button>
+                        </div>
+                    </form>
                 </div>
 
             </div>
@@ -89,6 +105,7 @@
     <script>
         const detectedIDs = [],
             detectedNameElement = document.getElementById("detectedName"),
+            detectedTimeElement = document.getElementById("detectedTime"),
             containerVideo = document.querySelector(".containerVideo");
             icon =document.querySelector(".icon");
 
@@ -98,14 +115,22 @@
             console.log("Kết nối WebSocket đã mở");
         };
 
+        const studentsPresentIDs = [];
+        const studentsAbsentIDs = [];
         ws.onmessage = (event) => {
             if (typeof event.data === "string") {
                 if (event.data === "stopped") {
                     alert("Đã dừng kết nối WebSocket");
                     containerVideo.style.display = "none";
                 } else {
+                    const detectedTime = getCurrentTime();
                     const detectedID = event.data.trim(); // Lấy ID từ dữ liệu nhận được
+                    if (!/^\d+$/.test(detectedID)) {
+                        console.error("Invalid student ID:", detectedID);
+                        return;
+                    }
                     detectedNameElement.innerText = "ID: " + detectedID;
+                    detectedTimeElement.innerText = "Time: " + detectedTime;
 
                     if (!detectedIDs.includes(detectedID)) {
                         detectedIDs.push(detectedID);
@@ -115,14 +140,43 @@
                             const checkButton = card.querySelector("#check");
 
                             // Nếu ID khớp, đổi màu nút checkButton
-                            if (!idElement.innerText.includes(detectedID)) {
-                                checkButton.classList.add("active"); 
-                                icon.classList.add("la-times");
-                            }
-                            else {
+                            const studentID = idElement.innerText.split(": ")[1];
+                            if (studentID === detectedID) {
                                 checkButton.classList.remove("active");
                                 icon.classList.remove("la-times");
+                                icon.classList.add("la-check");
+                                // if (!studentsPresentIDs.includes(id) && !studentsAbsentIDs.includes(id)) {
+                                //     studentsPresentIDs.push(id);
+                                // }
+                                if (!studentsPresentIDs.some(student => student.id === studentID)) {
+                                    studentsPresentIDs.push({ id: studentID, time: detectedTime });
+                                    checkButton.classList.remove("active");
+                                    icon.classList.remove("la-times");
+                                    icon.classList.add("la-check"); 
+                                }
                             }
+                            else {
+                                // checkButton.classList.add("active"); 
+                                // icon.classList.remove("la-check");
+                                // icon.classList.add("la-times");
+                                // if (!studentsAbsentIDs.includes(id)) {
+                                //     studentsAbsentIDs.push(id); 
+                                // }
+                                if (!studentsAbsentIDs.some(student => student.id === studentID) && 
+                                    !studentsPresentIDs.some(student => student.id === studentID)) {
+                                    studentsAbsentIDs.push({ id: studentID, time: detectedTime });
+                                    checkButton.classList.add("active"); 
+                                    icon.classList.remove("la-check");
+                                    icon.classList.add("la-times");
+                                }
+                            }
+                        });
+                        const btnsave = document.querySelector(".btnsave");
+                        btnsave.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            document.getElementById("studentsPresent").value = JSON.stringify(studentsPresentIDs);
+                            document.getElementById("studentsAbsent").value = JSON.stringify(studentsAbsentIDs);
+                            document.getElementById("attendanceForm").submit();
                         });
                     }
                 }
@@ -149,55 +203,18 @@
         document.getElementById("endButton").onclick = () => {
             ws.send("end");
         };
-    </script> -->
+    </script> 
 
-    
     <script>
-        const btnCheck = document.querySelector(".btnCheck");
+        const btnshowclasses = document.querySelector(".btnshowclasses");
         const  studentCards =document.querySelector(".studentCards");
 
-        btnCheck.addEventListener("click", function(event){
+        btnshowclasses.addEventListener("click", function(event){
             event.preventDefault();
             studentCards.style.display = "flex";
+            studentCards.style.flexWrap = "wrap";
         })
     </script>
-
-    <!-- <script>
-        const btnCam = document.querySelector(".btnCam"),
-            // btnCheck = document.querySelector(".btnCheck"),
-            studentCards =document.querySelector(".studentCards"),
-            videoElement = document.getElementById('webcam');
-            containerVideo =document.querySelector(".containerVideo");
-
-            btnCam.addEventListener("click", function() {
-                studentCards.style.display = "none";
-                containerVideo.style.display = "block";
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(function(stream) {
-                            const videoElement = document.getElementById('webcam');
-                            videoElement.srcObject = stream;
-                        })
-                        .catch(function(error) {
-                            console.log('Error accessing webcam: ', error);
-                        });
-                } else {
-                    console.log('Webcam access is not supported by your browser.');
-                }
-            });
-            
-            // btnCheck.addEventListener("click", function(){
-            //     containerVideo.style.display = "none";
-            //     studentCards.style.display = "flex";
-            //     if (videoElement.srcObject) {
-            //         const stream = videoElement.srcObject;
-            //         const tracks = stream.getTracks();
-
-            //         tracks.forEach(track => track.stop());
-            //         videoElement.srcObject = null;
-            //     }
-            // })
-    </script> -->
 
     <script src="javascript/toggle.js"></script>
 </body>

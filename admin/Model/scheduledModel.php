@@ -72,7 +72,8 @@
             $stmt->bind_param("s", $today);           
             $stmt->execute();
             $result = $stmt->get_result();
-            return $result->fetch_assoc();
+            $row = $result->fetch_assoc();
+            return $row ? $row['ID'] : null;
         }
     }
 ?>
