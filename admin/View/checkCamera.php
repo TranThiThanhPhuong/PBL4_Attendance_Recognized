@@ -30,26 +30,26 @@
             position: absolute;
             top: -15px;
             right: -10px;
-            background-color: var(--primary--color);
+            background-color: var(---primary--color-light);
             align-items: center;
             display: flex;
             justify-content: center;
-            border: 1px solid #fff;
+            border: 2px double var(--primary--color);
         }
 
         #check i {
             font-size: 18px;
-            color: var(--primary--color-light);
+            color: black;
         }
 
         #check.active {
-            background-color: yellow !important;
-            color: black;
+            background-color: var(--primary--color) !important;
+            border: 2px double white;
         }
 
         #check.active i {
             font-size: 18px;
-            color: black;
+            color: white;
         }
 
     </style>
@@ -83,7 +83,7 @@
                                     echo '<h5>' . htmlspecialchars($row["Ten"]) . '</h5>';
                                     // echo '<h5>' . htmlspecialchars($row["Email"]) . '</h5>';
                                 echo '</div>';
-                                echo ' <button id="check"><i class=" icon las la-check"></i></button>';
+                                echo ' <button id="check"><i id="icon" class="icon las la-times"></i></button>';
                             echo '</div>';
                         }
                     ?>
@@ -103,11 +103,21 @@
     </section>
 
     <script>
+        function getCurrentTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng từ 0-11
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
         const detectedIDs = [],
             detectedNameElement = document.getElementById("detectedName"),
             detectedTimeElement = document.getElementById("detectedTime"),
             containerVideo = document.querySelector(".containerVideo");
-            icon =document.querySelector(".icon");
+            icon =document.getElementById("icon");
 
         const ws = new WebSocket("ws://192.168.4.48:8765"); // Đổi IP theo Raspberry Pi
 
@@ -125,10 +135,7 @@
                 } else {
                     const detectedTime = getCurrentTime();
                     const detectedID = event.data.trim(); // Lấy ID từ dữ liệu nhận được
-                    if (!/^\d+$/.test(detectedID)) {
-                        console.error("Invalid student ID:", detectedID);
-                        return;
-                    }
+                    
                     detectedNameElement.innerText = "ID: " + detectedID;
                     detectedTimeElement.innerText = "Time: " + detectedTime;
 
@@ -142,32 +149,17 @@
                             // Nếu ID khớp, đổi màu nút checkButton
                             const studentID = idElement.innerText.split(": ")[1];
                             if (studentID === detectedID) {
-                                checkButton.classList.remove("active");
-                                icon.classList.remove("la-times");
-                                icon.classList.add("la-check");
-                                // if (!studentsPresentIDs.includes(id) && !studentsAbsentIDs.includes(id)) {
-                                //     studentsPresentIDs.push(id);
-                                // }
                                 if (!studentsPresentIDs.some(student => student.id === studentID)) {
                                     studentsPresentIDs.push({ id: studentID, time: detectedTime });
-                                    checkButton.classList.remove("active");
+                                    checkButton.classList.add("active"); 
                                     icon.classList.remove("la-times");
-                                    icon.classList.add("la-check"); 
+                                    icon.classList.add("la-check");
                                 }
                             }
                             else {
-                                // checkButton.classList.add("active"); 
-                                // icon.classList.remove("la-check");
-                                // icon.classList.add("la-times");
-                                // if (!studentsAbsentIDs.includes(id)) {
-                                //     studentsAbsentIDs.push(id); 
-                                // }
                                 if (!studentsAbsentIDs.some(student => student.id === studentID) && 
                                     !studentsPresentIDs.some(student => student.id === studentID)) {
-                                    studentsAbsentIDs.push({ id: studentID, time: detectedTime });
-                                    checkButton.classList.add("active"); 
-                                    icon.classList.remove("la-check");
-                                    icon.classList.add("la-times");
+                                    studentsAbsentIDs.push({ id: studentID });
                                 }
                             }
                         });

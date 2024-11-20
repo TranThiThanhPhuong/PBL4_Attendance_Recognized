@@ -884,7 +884,7 @@ form .text-info .select-capdo:visited, .select-lop:visited {
     align-items: center;
     background: var(--sidebar-color);
     margin-bottom: 20px;
-    width: 100%;
+    width: 100% !important;
     border-radius: 10px;
 }
 
@@ -901,6 +901,7 @@ li, ul {
     gap: 10px;
     align-items: center;
     padding: 10px;
+    width: 100% !important;
 }
 
 .btnWeek {
@@ -1133,6 +1134,10 @@ li, ul {
     border: none;
     outline: none;
     border-radius: 3px;
+}
+
+.btnsave {
+    width: auto;
 }
 
 .list-button button:hover {

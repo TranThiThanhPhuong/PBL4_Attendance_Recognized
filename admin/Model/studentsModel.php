@@ -59,6 +59,23 @@
             return $result->fetch_all(MYSQLI_ASSOC); 
         }
 
+        public function getInfoStudent($id_hv) {
+            $query = "SELECT * FROM hocvien WHERE ID = ?";
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed: " . $this->connection->error);
+            }
+            $stmt->bind_param("i", $id_hv);
+            if (!$stmt->execute()) {
+                throw new Exception("Execute statement failed: " . $stmt->error);
+            }
+            $result = $stmt->get_result();
+            if ($result->num_rows === 0) {
+                return null; 
+            }
+            return $result->fetch_assoc(); // Trả về một dòng
+        }
+
         public function editInfoStudent($id_hv, $ten, $gioitinh, $ngaysinh, $email, $diachi)  {
             $query = "UPDATE hocvien SET 
                             Ten = ?,

@@ -43,6 +43,16 @@
             }
         }
 
+        public function getInfoStudent($id_hv) {
+            try {
+                $students = $this->model->getInfoStudent($id_hv);
+                return $students; 
+            } catch (Exception $e) {
+                error_log("Error fetching student info: " . $e->getMessage());
+                return [];
+            }
+        }
+
         public function editInfoStudent($id_hv, $ten, $gioitinh, $ngaysinh, $email, $diachi) {
             try {
                 $this->model->editInfoStudent($id_hv, $ten, $gioitinh, $ngaysinh, $email, $diachi);
