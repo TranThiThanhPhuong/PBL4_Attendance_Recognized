@@ -2,14 +2,17 @@
     require_once '../ConnDB/connDB.php';
     require_once '../Controller/studentsController.php';
     $studentsController = new StudentsController($connectionDB);
-    if (isset($_GET['ID'])) {
+    if (isset($_GET['ID']) && isset($_GET['id_day'] )) {
         $id_lop = $_GET['ID'];
+        $id_day = $_GET['id_day'];
         $students = $studentsController->getAllStudentInClass($id_lop);
+        $id_qlbh = $studentsController->getIdQLBH($id_lop, $id_day);
     } else {
-        echo "Không tìm thấy ID lớp.";
+        echo "Không tìm thấy ID lớp và ID Ngày.";
     }
     
     if (!empty($students)) {
+        
 ?>
 
 <!DOCTYPE html>
@@ -73,30 +76,33 @@
                 <div class="studentCards" style="display: none">
                     <?php
                         $stt = 0;
+                        $studentsPresent = [];
+                        $studentsAbsent = []; 
                         foreach ($students as $row) {
                             $stt++;
-                            echo '<div class="studentCard">';
+                            echo '<div class="studentCard"  data-id="' . htmlspecialchars($row["ID"]) . '">';
                                 echo '<img src="image/logostudent.png" alt="">';
                                 echo '<div class="info">';
                                     echo '<small>STT: '.$stt.'</small>';
                                     echo '<p id="idStudent">ID: ' . htmlspecialchars($row["ID"]) .'</p>';
                                     echo '<h5>' . htmlspecialchars($row["Ten"]) . '</h5>';
-                                    // echo '<h5>' . htmlspecialchars($row["Email"]) . '</h5>';
                                 echo '</div>';
-                                echo ' <button id="check"><i id="icon" class="icon las la-times"></i></button>';
+                                echo ' <button id="check">
+                                        <i id="icon" class="icon las la-times"></i>
+                                        </button>';
                             echo '</div>';
                         }
                     ?>
-                    <form action="saveDiscord.php" method="post" id="attendanceForm">
+                    <form action="sendMail.php" method="post" id="attendanceForm">
                         <input type="hidden" name="studentsPresent" id="studentsPresent">
                         <input type="hidden" name="studentsAbsent" id="studentsAbsent">
                         <div class="list-button">
-                            <button class="btnsave">Save Discord Attendance</button>
+                            <button type="submit" class="btnsave">Gửi Mail</button>
                         </div>
                     </form>
                 </div>
-
             </div>
+
             
         </section>
 
@@ -113,67 +119,26 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
-        const detectedIDs = [],
-            detectedNameElement = document.getElementById("detectedName"),
-            detectedTimeElement = document.getElementById("detectedTime"),
-            containerVideo = document.querySelector(".containerVideo");
-            icon =document.getElementById("icon");
-
         const ws = new WebSocket("ws://192.168.4.48:8765"); // Đổi IP theo Raspberry Pi
+
+        let students = <?php echo json_encode($students); ?>;
+        let studentsPresent = []; 
+        let studentsAbsent = [];  
 
         ws.onopen = () => {
             console.log("Kết nối WebSocket đã mở");
         };
 
-        const studentsPresentIDs = [];
-        const studentsAbsentIDs = [];
         ws.onmessage = (event) => {
             if (typeof event.data === "string") {
                 if (event.data === "stopped") {
                     alert("Đã dừng kết nối WebSocket");
-                    containerVideo.style.display = "none";
                 } else {
-                    const detectedTime = getCurrentTime();
-                    const detectedID = event.data.trim(); // Lấy ID từ dữ liệu nhận được
-                    
-                    detectedNameElement.innerText = "ID: " + detectedID;
-                    detectedTimeElement.innerText = "Time: " + detectedTime;
-
-                    if (!detectedIDs.includes(detectedID)) {
-                        detectedIDs.push(detectedID);
-                        const studentCards = document.querySelectorAll(".studentCard");
-                        studentCards.forEach(card => {
-                            const idElement = card.querySelector("#idStudent");
-                            const checkButton = card.querySelector("#check");
-
-                            // Nếu ID khớp, đổi màu nút checkButton
-                            const studentID = idElement.innerText.split(": ")[1];
-                            if (studentID === detectedID) {
-                                if (!studentsPresentIDs.some(student => student.id === studentID)) {
-                                    studentsPresentIDs.push({ id: studentID, time: detectedTime });
-                                    checkButton.classList.add("active"); 
-                                    icon.classList.remove("la-times");
-                                    icon.classList.add("la-check");
-                                }
-                            }
-                            else {
-                                if (!studentsAbsentIDs.some(student => student.id === studentID) && 
-                                    !studentsPresentIDs.some(student => student.id === studentID)) {
-                                    studentsAbsentIDs.push({ id: studentID });
-                                }
-                            }
-                        });
-                        const btnsave = document.querySelector(".btnsave");
-                        btnsave.addEventListener("click", (event) => {
-                            event.preventDefault();
-                            document.getElementById("studentsPresent").value = JSON.stringify(studentsPresentIDs);
-                            document.getElementById("studentsAbsent").value = JSON.stringify(studentsAbsentIDs);
-                            document.getElementById("attendanceForm").submit();
-                        });
-                    }
+                    document.getElementById("detectedName").innerText = "ID: " + event.data;
+                    checkStudentAttendance(event.data);
                 }
             } else {
-                // Xử lý dữ liệu dạng hình ảnh từ WebSocket
+                // Nhận và hiển thị frame video
                 const blob = new Blob([event.data], { type: "image/jpeg" });
                 const url = URL.createObjectURL(blob);
                 const imgElement = document.getElementById("cameraFeed");
@@ -195,8 +160,42 @@
         document.getElementById("endButton").onclick = () => {
             ws.send("end");
         };
-    </script> 
+        
+        function checkStudentAttendance(id) {
+            let studentFound = false;
+            students.forEach(student => {
+                if (student.ID === id) {
+                    studentFound = true;
+                    if (!studentsPresent.includes(student)) {
+                        studentsPresent.push(student); 
+                        const studentCard = document.querySelector(`.studentCard[data-id="${id}"]`);
+                        const checkButton = studentCard.querySelector("#check");
+                        checkButton.classList.add("active");
+                        const icon = checkButton.querySelector("i");
+                        icon.classList.remove("las", "la-times");
+                        icon.classList.add("las", "la-check"); 
+                    }
+                }
+            });
 
+            if (!studentFound) {
+                let absentStudent = { ID: id, status: 'absent' };
+                studentsAbsent.push(absentStudent);
+            }
+            console.log("Học sinh có mặt: ", studentsPresent);
+            console.log("Học sinh vắng: ", studentsAbsent);
+        }
+
+        // document.getElementById("attendanceForm").onsubmit = function() {
+        //     let presentList = JSON.stringify(studentsPresent);
+        //     let absentList = JSON.stringify(studentsAbsent);
+        // };
+        document.getElementById("attendanceForm").onsubmit = function() {
+            document.getElementById('studentsPresent').value = JSON.stringify(studentsPresent);
+            document.getElementById('studentsAbsent').value = JSON.stringify(studentsAbsent);
+        };
+    </script>
+    
     <script>
         const btnshowclasses = document.querySelector(".btnshowclasses");
         const  studentCards =document.querySelector(".studentCards");

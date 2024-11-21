@@ -129,7 +129,36 @@
             return $stmt->affected_rows > 0; 
         }
 
-        
+        public function attendanceStudent($id_qlbh, $id_hv, $status) {
+            $query = "INSERT INTO diemdanh (ID_QuanLiNgayHoc, ID_HocVien, TrangThai) VALUES (?, ?, ?)";
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed: " . $this->connection->error);
+            }
+            $stmt->bind_param("iis", $id_qlbh, $id_hv, $status);
+            if (!$stmt->execute()) {
+                throw new Exception("Execute statement failed: " . $stmt->error);
+            }
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No student was added.");
+            }
+        }
+
+        public function getIdQLBH($id_lop, $id_day) {
+            $query = "SELECT ID FROM quanlyngayhoc WHERE ID_Lop = ? and ID_NgayHoc = ?";
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed: " . $this->connection->error);
+            }
+            $stmt->bind_param("ii", $id_lop, $id_day);
+            if (!$stmt->execute()) {
+                throw new Exception("Execute statement failed: " . $stmt->error);
+            }
+            if ($stmt->affected_rows === 0) {
+                throw new Exception("No student was added.");
+            }
+        }
+
     }
 
 ?>

@@ -6,8 +6,10 @@
 
     $classController = new ClassController();
     $classescount = $classController->countClasses();
+
     $studentsController = new StudentsController($connectionDB);
     $studentscount = $studentsController->countStudents();
+    
     $scheduledController = new ScheduledController();
     $timetable = $scheduledController->getAllTime();
     $weeks = $scheduledController->getAllWeek();

@@ -78,6 +78,25 @@
             }
         }
 
+        public function attendanceStudent($id_qlbh, $id_hv, $status) {
+            try {
+                $students = $this->model->attendanceStudent($id_qlbh, $id_hv, $status);
+                return $students; 
+            } catch (Exception $e) {
+                error_log("Error fetching student info: " . $e->getMessage());
+                return [];
+            }
+        }
+
+        public function getIdQLBH($id_lop, $id_day) {
+            try {
+                $id_qlbh = $this->model->getIdQLBH($id_lop, $id_day);
+                return $id_qlbh; 
+            } catch (Exception $e) {
+                error_log("Error fetching student info: " . $e->getMessage());
+                return [];
+            }
+        }
     }
 
 ?>
