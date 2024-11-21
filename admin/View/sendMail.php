@@ -6,12 +6,12 @@
     require 'phpMailer/PHPMailer-master/src/SMTP.php';
     require_once '../ConnDB/connDB.php';
     require_once '../Controller/studentsController.php';
+
     $studentsController = new StudentsController($connectionDB);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $studentsPresent = json_decode($_POST['studentsPresent']);
-        $studentsAbsent = json_decode($_POST['studentsAbsent']);
-
+        $presentIDs = json_decode($_POST['presentIDs'], true);
+        $absentIDs = json_decode($_POST['absentIDs'], true);
         try {
             $mail = new PHPMailer(true);
             $mail->isSMTP();
@@ -21,35 +21,46 @@
             $mail->Password = 'jhow mqds wyyt ykgq'; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
-            $mail->setFrom('phuongsuga333@gmail.com', 'Admin'); 
+            $mail->setFrom('phuongsuga333@gmail.com', 'Admin');
+            $mail->addReplyTo('phuongsuga333@gmail.com', 'Admin');
+            foreach ($presentIDs as $student) {
+                $studentInfo = $studentsController->getInfoStudent($student['id']);
+                $mail->addAddress($studentInfo['Email']);
+                
+                $message = "📢 THÔNG BÁO\n
+                            Kính gửi học viên {$studentInfo['Name']},\n
+                            Hôm nay, bạn đã có mặt trong buổi học.\n
+                            Chúc bạn học tập hiệu quả và đạt nhiều thành tích tốt!\n
+                            Trân trọng,\n
+                            [Ban giám hiệu/ Giáo viên phụ trách]";
+
+                $mail->Subject = 'Thông báo Điểm danh';
+                $mail->Body = $message;
+                
+                $mail->send();
+                $mail->clearAddresses();
+            }
+            foreach ($absentIDs as $student) {
+                $studentInfo = $studentsController->getInfoStudent($student['id']);
+                $mail->addAddress($studentInfo['Email']); 
+                
+                $message = "📢 THÔNG BÁO\n
+                            Kính gửi học viên {$studentInfo['Name']},\n
+                            Hôm nay, bạn đã vắng mặt trong buổi học.\n
+                            Vui lòng đến lớp vào ngày học tiếp theo.\n
+                            Nếu có lý do chính đáng, vui lòng liên hệ giáo viên phụ trách để được hỗ trợ.\n
+                            Trân trọng,\n
+                            [Ban giám hiệu/ Giáo viên phụ trách]";
+
+                $mail->Subject = 'Thông báo Điểm danh';
+                $mail->Body = $message;
+                
+                $mail->send();
+                $mail->clearAddresses();
+            }
+
+            echo "Email đã được gửi thành công!";
             
-            foreach ($studentsPresent as $student) {
-                $studentInfo = $studentsController->getInfoStudent($student->ID);
-                if ($studentInfo && isset($studentInfo['email'])) {
-                    $mail->addAddress($studentInfo['email']); 
-                    $mail->Subject = 'Điểm danh - Học cùng Nihongo';
-                    $mail->Body    = 'Chào ' . $studentInfo['Ten'] . ',\n\nBạn đã được điểm danh là có mặt trong lớp hôm nay.';
-                    $mail->send();
-                    $mail->clearAddresses(); 
-                }
-            }
-
-            foreach ($studentsAbsent as $student) {
-                $studentInfo = $studentsController->getInfoStudent($student->ID);
-                if ($studentInfo && isset($studentInfo['email'])) {
-                    $mail->addAddress($studentInfo['email']); 
-                    $mail->Subject = 'Điểm danh - Học cùng Nihongo';
-                    $mail->Body    = 'Chào ' . $studentInfo['Ten'] . ',\n\nBạn đã bị điểm danh vắng trong lớp hôm nay.';
-                    $mail->send();
-                    $mail->clearAddresses(); 
-                }
-            }
-
-            echo "<script>
-                    alert('Email đã được gửi thành công!');
-                    window.location.href = 'attendanceView.php';
-                </script>";
-            exit();
         } catch (Exception $e) {
             echo "Lỗi khi gửi email: {$mail->ErrorInfo}";
         }
