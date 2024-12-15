@@ -10,12 +10,10 @@
     $studentsController = new StudentsController($connectionDB);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // $presentIDs = json_decode($_POST['presentIDs'], true);
-        // $absentIDs = json_decode($_POST['absentIDs'], true);
-        $requestBody = file_get_contents('php://input'); // Get raw JSON data
-        $data = json_decode($requestBody, true); // Decode JSON to an array
+        $requestBody = file_get_contents('php://input'); 
+        $data = json_decode($requestBody, true);
 
-        $presentIDs = $data['presentIDs'] ?? []; // Default to empty array if key is missing
+        $presentIDs = $data['presentIDs'] ?? [];
         $absentIDs = $data['absentIDs'] ?? [];
         if (!is_array($presentIDs) || !is_array($absentIDs)) {
             die('Invalid data format');
@@ -43,7 +41,7 @@
                                 Trân trọng,\n
                                 [Ban giám hiệu/ Giáo viên phụ trách]";
     
-                    $mail->Subject = 'Thông báo Điểm danh';
+                    $mail->Subject = 'Trung tam Nihongo\n';
                     $mail->Body = $message;
                     
                     $mail->send();
@@ -63,7 +61,7 @@
                                 Trân trọng,\n
                                 [Ban giám hiệu/ Giáo viên phụ trách]";
     
-                    $mail->Subject = 'Thông báo Điểm danh';
+                    $mail->Subject = 'Trung tam Nihongo\n';
                     $mail->Body = $message;
                     
                     $mail->send();
